@@ -25,10 +25,10 @@ namespace DrawD2X
             t = -1;
             DiffSolver solver = new DiffSolver(DiffSolver.DefaultVx0, DiffSolver.DefaultUx0, DiffSolver.DefaultU0t, DiffSolver.DefaultUlt, DiffSolver.DefaultF);
             result = solver.Solve();
-            chart1.ChartAreas[0].Axes[0].Minimum = result.x.Min();
-            chart1.ChartAreas[0].Axes[0].Maximum = result.x.Max();
-            chart1.ChartAreas[0].Axes[1].Minimum = -1;
-            chart1.ChartAreas[0].Axes[1].Maximum = 1;
+            chart1.ChartAreas[0].Axes[0].Minimum = result.xMin;
+            chart1.ChartAreas[0].Axes[0].Maximum = result.xMax;
+            chart1.ChartAreas[0].Axes[1].Minimum = result.uMin;
+            chart1.ChartAreas[0].Axes[1].Maximum = result.uMax;
             timer1.Interval = 17;
             timer1.Enabled = true;
             

@@ -106,7 +106,7 @@ namespace DrawD2X
 
         static public double DefaultUx0(double x)
         {
-            return Math.Sin(x);
+            return Math.Sin(x)*x;
         }
 
         static public double DefaultUlt(double x)

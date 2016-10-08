@@ -13,11 +13,6 @@ namespace DrawD2X
 
         double tA = 0;
         double tB = 4*Math.PI;
-        double n;
-        double l;
-        double h = 0.01 * Math.PI;
-        double tau = 0.01 * Math.PI;
-
 
         public delegate double Vx0(double x);
         public delegate double Ux0(double x);
@@ -31,34 +26,26 @@ namespace DrawD2X
         Ult ult;
         F f;
 
-        public DiffSolver(Vx0 vx0, Ux0 ux0, U0t u0t, Ult ult, F f, double xB, double tB, double h, double tau)
+        public DiffSolver(Vx0 vx0, Ux0 ux0, U0t u0t, Ult ult, F f)
         {
             this.vx0 = vx0;
             this.ux0 = ux0;
             this.u0t = u0t;
             this.ult = ult;
             this.f = f;
-            this.xB = tB;
-            this.tB = tB;
-            if (h != 0)
-            {
-                this.h = h;
-            }
-            if (tau != 0)
-            {
-                this.tau = tau;
-            }
         }
 
         public Result Solve()
         {
+            double h = 0.01 * Math.PI;
             double[] x = new double[(int)Math.Ceiling((xB - xA) / h)+1];
             int Nx = x.Length;
             for (int i = 0; i<x.Length; i++)
             {
                 x[i] = xA + i * h;                
-            }            
+            }
             
+            double tau = 0.01 * Math.PI;
             double[] t = new double[(int)Math.Ceiling((tB - tA) / tau)+1];
             int Nt = t.Length;
             for (int i = 0; i < t.Length; i++)
@@ -91,7 +78,7 @@ namespace DrawD2X
             {
                 u[Nx - 1, i] = ult(t[i]);
             }
-           
+
             //%находим "u" на 2-м
             //%используя левую конечную разность
             //u(:,2)=u(:,1)+tau* v(:,1);
@@ -108,8 +95,7 @@ namespace DrawD2X
                 }
             }
 
-            double[,] Uacc = BuildSolution(new double[Nx, Nt]);
-            Result result = new Result(x, t, u, Uacc);
+            Result result = new Result(x, t, u);
             return result;
         }
 
@@ -130,52 +116,12 @@ namespace DrawD2X
 
         static public double DefaultU0t(double x)
         {
-            return 2;
+            return 0;
         }
 
         static public double DefaultF(double x, double t)
         {
             return 0;
-        }
-
-        private double[,] BuildSolution(double[,] u)
-        {
-            double h = 0.01 * Math.PI;
-            double tau = 0.01 * Math.PI;
-
-            for (int i = 0; i < u.GetLength(0); i++)
-            {
-                for (int j = 0; j < u.GetLength(1); j++)
-                {
-                    u[i, j] = 0;
-                }
-            }
-            l = xB-xA;
-            for (n = 1; n < 10; n++)
-            {
-                double omega = Math.PI*n/l;
-                double Phin = 2 * MathNet.Numerics.Integrate.OnClosedInterval(newPhi, xA, xB) / l;
-                double Psin = 2 * MathNet.Numerics.Integrate.OnClosedInterval(newPsi, xA, xB) / l;
-                for (int i = 0; i < u.GetLength(0); i++)
-                {
-                    for (int j = 0; j < u.GetLength(1); j++)
-                    {
-                        u[i,j] += ((Psin/omega)*Math.Sin(omega*(tau*j)) + Phin*Math.Cos(omega*(tau*j))) *  Math.Sin(omega*(h*i)); 
-                    }                    
-                }
-            }
-
-            return u;
-        }
-
-        public double newPhi(double x)
-        {
-            return ux0(x) * Math.Sin(Math.PI * n * x / l);
-        }
-
-        public double newPsi(double x)
-        {
-            return vx0(x) * Math.Sin(Math.PI * n * x / l);
         }
     }
 }

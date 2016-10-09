@@ -23,13 +23,17 @@ namespace DrawD2X
         private void button1_Click(object sender, EventArgs e)
         {
             t = -1;
-            DiffSolver solver = new DiffSolver(DiffSolver.DefaultVx0, DiffSolver.DefaultUx0, DiffSolver.DefaultU0t, DiffSolver.DefaultUlt, DiffSolver.DefaultF, 3*Math.PI, 4*Math.PI, 0.005, 0.005);
+            DiffSolver solver = new DiffSolver(DiffSolver.DefaultVx0, DiffSolver.DefaultUx0, 
+                DiffSolver.DefaultU0t, DiffSolver.DefaultUlt, 
+                DiffSolver.DefaultF, 
+                3*Math.PI, 4*Math.PI, 
+                0.3, 0.3);
             result = solver.Solve();
             chart1.ChartAreas[0].Axes[0].Minimum = result.xMin;
             chart1.ChartAreas[0].Axes[0].Maximum = result.xMax;
             chart1.ChartAreas[0].Axes[1].Minimum = result.uMin;
             chart1.ChartAreas[0].Axes[1].Maximum = result.uMax;            
-            timer1.Interval = 17;
+            timer1.Interval = 48;
             timer1.Enabled = true;
             
         }

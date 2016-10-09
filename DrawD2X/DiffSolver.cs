@@ -52,14 +52,20 @@ namespace DrawD2X
 
         public Result Solve()
         {
-            double[] x = new double[(int)Math.Ceiling((xB - xA) / h)];
+            //double[] x = new double[(int)Math.Ceiling((xB - xA) / h)];
+            int countOfPointsX = (int)Math.Ceiling((xB - xA) / h);
+            this.h = (xB - xA) / countOfPointsX;
+            double[] x = new double[countOfPointsX + 1];
             int Nx = x.Length;
             for (int i = 0; i<x.Length; i++)
             {
                 x[i] = xA + i * h;                
-            }            
-            
-            double[] t = new double[(int)Math.Ceiling((tB - tA) / tau)];
+            }
+
+            //double[] t = new double[(int)Math.Ceiling((tB - tA) / tau)];
+            int countOfPointsT = (int)Math.Ceiling((tB - tA) / h);
+            this.tau = (tB - tA) / countOfPointsT;
+            double[] t = new double[countOfPointsT + 1];
             int Nt = t.Length;
             for (int i = 0; i < t.Length; i++)
             {
@@ -84,12 +90,12 @@ namespace DrawD2X
             //%Заносим 2 граничных условия по x
             for (int i = 0; i < Nt; i++)
             {
-                //u[0, i] = u0t(t[i]);
+                u[0, i] = u0t(t[i]);
             }
 
             for (int i = 0; i < Nt; i++)
             {
-                //u[Nx - 1, i] = ult(t[i]);
+                u[Nx - 1, i] = ult(t[i]);
             }
            
             //%находим "u" на 2-м
@@ -102,11 +108,13 @@ namespace DrawD2X
 
             for(int k = 1; k<Nt-1; k++)
             {
-                double[] error = new double[Nx];
                 for (int i = 1; i < Nx-1; i++)
                 {
+                    if(Math.Abs(u[i,k])>1)
+                    {
+                        ;
+                    }
                     u[i, k + 1] = 2 * u[i, k] - u[i, k - 1] + (tau / h) * (tau / h) * (u[i - 1, k] - 2 * u[i, k] + u[i + 1, k]) + tau *tau * f[i, k];
-                    error[i] = u[i, k + 1];
                 }
             }
 
@@ -123,7 +131,7 @@ namespace DrawD2X
 
         static public double DefaultUx0(double x)
         {
-            return Math.Sin(x);
+            return x*Math.Sin(x);
         }
 
         static public double DefaultUlt(double x)
